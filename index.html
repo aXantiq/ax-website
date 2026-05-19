@@ -232,20 +232,41 @@
         animation: fadeIn 1s ease 2.5s forwards;
       }
 
-      .cta a {
+      .cta-btn {
         color: var(--dark);
         background: var(--green);
-        text-decoration: none;
+        border: none;
+        font-family: "Geist Mono", "Courier New", monospace;
         font-size: 0.85rem;
         padding: 0.75rem 2rem;
         letter-spacing: 0.1em;
         text-transform: uppercase;
+        cursor: pointer;
         transition: all 0.2s ease;
       }
 
-      .cta a:hover {
+      .cta-btn:hover {
         background: var(--white);
         box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+      }
+
+      .cta-gate {
+        animation: fadeIn 0.4s ease forwards;
+      }
+
+      .cta-gate .prompt-label {
+        margin-bottom: 0.75rem;
+      }
+
+      .cta-input {
+        -webkit-text-security: none !important;
+        width: 200px;
+        font-size: 1rem;
+        text-align: center;
+      }
+
+      .cta-gate.error .hint {
+        color: #ff4444;
       }
 
       .footer-note {
@@ -353,10 +374,24 @@
         </div>
 
         <div class="cta">
-          <a
-            href="mailto:hello@axantiq.com?subject=Let%27s%20build%20something%20-%20here%20is%20what%20I%20want"
-            >Let's build something</a
-          >
+          <button type="button" class="cta-btn" id="ctaButton">
+            Let's build something
+          </button>
+          <div class="cta-gate" id="ctaGate" hidden>
+            <div class="prompt-label">type "hello" to send</div>
+            <div class="input-row">
+              <span class="cursor-prefix">></span>
+              <input
+                type="text"
+                id="ctaInput"
+                class="cta-input"
+                placeholder="hello"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div class="hint" id="ctaHint">press Enter</div>
+          </div>
         </div>
 
         <div class="footer-note">aXantiq — the X is always big.</div>
@@ -411,8 +446,55 @@
       // Auto-focus
       input.focus();
 
-      // Click anywhere to focus input
-      document.addEventListener("click", () => input.focus());
+      // Click anywhere to refocus the password input — only while gate is up
+      document.addEventListener("click", (e) => {
+        if (gateScreen.style.display === "none") return;
+        if (e.target.closest("a, button, input")) return;
+        input.focus();
+      });
+
+      // CTA mini-gate: button reveals an inline prompt; user must type
+      // "hello" to assemble and open the mailto. Email is never in markup.
+      const ctaButton = document.getElementById("ctaButton");
+      const ctaGate = document.getElementById("ctaGate");
+      const ctaInput = document.getElementById("ctaInput");
+      const ctaHint = document.getElementById("ctaHint");
+      let ctaAttempts = 0;
+
+      ctaButton.addEventListener("click", () => {
+        ctaButton.style.display = "none";
+        ctaGate.hidden = false;
+        ctaInput.focus();
+      });
+
+      ctaInput.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        const val = ctaInput.value.toLowerCase().trim();
+        if (val === "hello") {
+          const user = "hello";
+          const domain = ["axantiq", "com"].join(".");
+          const subject = "Let's build something - here is what I want";
+          window.location.href =
+            "mailto:" +
+            user +
+            "@" +
+            domain +
+            "?subject=" +
+            encodeURIComponent(subject);
+        } else {
+          ctaAttempts++;
+          ctaInput.value = "";
+          ctaGate.classList.add("error");
+          const responses = [
+            'type "hello" — like the email.',
+            'literally just "hello".',
+            "five letters: h-e-l-l-o.",
+          ];
+          ctaHint.textContent =
+            responses[Math.min(ctaAttempts - 1, responses.length - 1)];
+          setTimeout(() => ctaGate.classList.remove("error"), 1500);
+        }
+      });
     </script>
   </body>
 </html>
