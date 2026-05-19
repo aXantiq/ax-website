@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aXantiq — AI. Built. Shipped.</title>
+    <meta
+      name="description"
+      content="aXantiq — AI strategy, end-to-end work systems, product development, and IT consulting that actually ships."
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link
+      rel="icon"
+      href="/axantiq_brand/axantiq_icon_512_transparent.png"
+      type="image/png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="/axantiq_brand/axantiq_icon_512_dark.png"
+    />
+    <meta property="og:title" content="aXantiq — AI. Built. Shipped." />
+    <meta
+      property="og:description"
+      content="AI strategy, end-to-end work systems, product development, and IT consulting that actually ships."
+    />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="aXantiq — AI. Built. Shipped." />
+    <meta
+      name="twitter:description"
+      content="AI strategy, end-to-end work systems, product development, and IT consulting that actually ships."
+    />
+    <meta name="twitter:image" content="/og-image.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --green: #00ff88;
+        --dark: #0a0a0a;
+        --dim: #1a1a1a;
+        --muted: #555;
+        --white: #ffffff;
+      }
+
+      body {
+        background: var(--dark);
+        color: var(--green);
+        font-family: "Geist Mono", "Courier New", monospace;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      /* Subtle scanline effect */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.03) 2px,
+          rgba(0, 0, 0, 0.03) 4px
+        );
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      .container {
+        text-align: center;
+        max-width: 600px;
+        padding: 2rem;
+      }
+
+      /* Logo */
+      .logo {
+        display: block;
+        height: 96px;
+        width: auto;
+        margin: 0 auto 0.5rem;
+        opacity: 0;
+        animation: fadeIn 1s ease 0.3s forwards;
+        transition: filter 0.3s ease;
+      }
+      .logo:hover {
+        filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.4));
+      }
+
+      .tagline {
+        color: var(--muted);
+        font-size: 0.85rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 3rem;
+        opacity: 0;
+        animation: fadeIn 1s ease 0.8s forwards;
+      }
+
+      /* Password gate */
+      .gate {
+        opacity: 0;
+        animation: fadeIn 1s ease 1.2s forwards;
+      }
+
+      .prompt-label {
+        color: var(--muted);
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+      }
+
+      .input-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .cursor-prefix {
+        color: var(--green);
+        font-size: 1.2rem;
+        animation: blink 1s step-end infinite;
+      }
+
+      input[type="password"],
+      input[type="text"] {
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid var(--muted);
+        color: var(--green);
+        font-family: "Geist Mono", "Courier New", monospace;
+        font-size: 1.2rem;
+        padding: 0.5rem 0;
+        width: 280px;
+        outline: none;
+        transition: border-color 0.3s ease;
+        -webkit-text-security: disc;
+      }
+
+      input:focus {
+        border-bottom-color: var(--green);
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 0.7rem;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+        min-height: 1.2rem;
+      }
+
+      .hint a {
+        color: var(--muted);
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-underline-offset: 3px;
+      }
+      .hint a:hover {
+        color: var(--green);
+      }
+
+      /* Error state */
+      .error .hint {
+        color: #ff4444;
+      }
+
+      /* Success state */
+      .success-screen {
+        display: none;
+        opacity: 0;
+        text-align: center;
+      }
+
+      .success-screen.visible {
+        display: block;
+        animation: fadeIn 0.8s ease forwards;
+      }
+
+      .welcome-text {
+        font-size: 1.1rem;
+        color: var(--green);
+        margin-bottom: 2rem;
+        line-height: 1.8;
+      }
+
+      .welcome-text .highlight {
+        color: var(--white);
+      }
+
+      .services {
+        text-align: left;
+        display: inline-block;
+        margin: 2rem 0;
+      }
+
+      .service-item {
+        color: var(--muted);
+        font-size: 0.85rem;
+        padding: 0.4rem 0;
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+
+      .service-item .bullet {
+        color: var(--green);
+        margin-right: 0.75rem;
+      }
+
+      .service-item.show {
+        animation: slideIn 0.4s ease forwards;
+      }
+
+      .cta {
+        margin-top: 2.5rem;
+        opacity: 0;
+        animation: fadeIn 1s ease 2.5s forwards;
+      }
+
+      .cta a {
+        color: var(--dark);
+        background: var(--green);
+        text-decoration: none;
+        font-size: 0.85rem;
+        padding: 0.75rem 2rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+      }
+
+      .cta a:hover {
+        background: var(--white);
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+      }
+
+      .footer-note {
+        margin-top: 3rem;
+        font-size: 0.65rem;
+        color: var(--muted);
+        opacity: 0;
+        animation: fadeIn 1s ease 3s forwards;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Gate Screen -->
+      <div id="gateScreen">
+        <img
+          class="logo"
+          src="/axantiq_brand/axantiq_logo_green_transparent.png"
+          alt="aXantiq"
+          width="288"
+          height="96"
+        />
+        <div class="tagline">AI. Built. Shipped.</div>
+
+        <div class="gate">
+          <div class="prompt-label">You know the drill.</div>
+          <div class="input-row">
+            <span class="cursor-prefix">></span>
+            <input
+              type="password"
+              id="passwordInput"
+              placeholder="password"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+          <div class="hint" id="hint">
+            <a
+              href="https://en.wikipedia.org/wiki/Swordfish_(film)"
+              target="_blank"
+              rel="noopener"
+              >Need a hint?</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Screen -->
+      <div id="successScreen" class="success-screen">
+        <img
+          class="logo"
+          src="/axantiq_brand/axantiq_logo_green_transparent.png"
+          alt="aXantiq"
+          width="288"
+          height="96"
+        />
+        <div class="welcome-text">
+          You knew the password.<br />
+          You know what we do.<br />
+          <span class="highlight">That's why you're here.</span>
+        </div>
+
+        <div class="services" id="services">
+          <div class="service-item">
+            <span class="bullet">></span> AI strategy & implementation
+          </div>
+          <div class="service-item">
+            <span class="bullet">></span> End-to-end work systems
+          </div>
+          <div class="service-item">
+            <span class="bullet">></span> Product development
+          </div>
+          <div class="service-item">
+            <span class="bullet">></span> IT consulting that actually ships
+          </div>
+        </div>
+
+        <div class="cta">
+          <a
+            href="mailto:hello@axantiq.com?subject=Let%27s%20build%20something%20-%20here%20is%20what%20I%20want"
+            >Let's build something</a
+          >
+        </div>
+
+        <div class="footer-note">aXantiq — the X is always big.</div>
+      </div>
+    </div>
+
+    <script>
+      const input = document.getElementById("passwordInput");
+      const hint = document.getElementById("hint");
+      const gateScreen = document.getElementById("gateScreen");
+      const successScreen = document.getElementById("successScreen");
+      const services = document.getElementById("services");
+
+      let attempts = 0;
+
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          const val = input.value.toLowerCase().trim();
+
+          if (val === "swordfish") {
+            // Success
+            gateScreen.style.display = "none";
+            successScreen.classList.add("visible");
+
+            // Stagger service items
+            const items = services.querySelectorAll(".service-item");
+            items.forEach((item, i) => {
+              setTimeout(() => item.classList.add("show"), 800 + i * 300);
+            });
+          } else {
+            attempts++;
+            input.value = "";
+            input.parentElement.parentElement.classList.add("error");
+
+            const responses = [
+              "Nope. Think movies.",
+              "Not quite. Hugh Jackman? John Travolta? 2001?",
+              "It's literally in the hint link.",
+              "Come on. You're so close.",
+            ];
+
+            hint.textContent =
+              responses[Math.min(attempts - 1, responses.length - 1)];
+
+            setTimeout(() => {
+              input.parentElement.parentElement.classList.remove("error");
+            }, 1500);
+          }
+        }
+      });
+
+      // Auto-focus
+      input.focus();
+
+      // Click anywhere to focus input
+      document.addEventListener("click", () => input.focus());
+    </script>
+  </body>
+</html>
