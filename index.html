@@ -82,16 +82,20 @@
       .container {
         text-align: center;
         max-width: 600px;
-        padding: 2rem;
+        padding: 2rem 1rem;
+        margin: 0 auto;
       }
 
       /* Logo */
       .logo {
         display: block;
         width: min(560px, 88vw);
+        max-width: 100%;
         height: auto;
         aspect-ratio: 3 / 1;
-        margin: 0 auto 1rem;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1rem;
         opacity: 0;
         animation: fadeIn 1s ease 0.3s forwards;
         transition: filter 0.3s ease;
@@ -332,6 +336,7 @@
               spellcheck="false"
             />
           </div>
+          <div class="hint" id="enterHint">press Enter</div>
           <div class="hint" id="hint">
             <a
               href="https://en.wikipedia.org/wiki/Swordfish_(film)"
@@ -486,9 +491,8 @@
           ctaInput.value = "";
           ctaGate.classList.add("error");
           const responses = [
-            'type "hello" — like the email.',
-            'literally just "hello".',
-            "five letters: h-e-l-l-o.",
+            'type "hello".',
+            'literally just "hello", then press Enter.',
           ];
           ctaHint.textContent =
             responses[Math.min(ctaAttempts - 1, responses.length - 1)];
