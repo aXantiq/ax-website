@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Static site, no package.json / build step. Real conformance check
+      # against the W3C Nu Html Checker (the same engine validator.w3c.org
+      # uses) on every tracked HTML file.
+      - name: Validate HTML (W3C Nu Html Checker)
+        run: npx --yes vnu-jar $(git ls-files '*.html')
